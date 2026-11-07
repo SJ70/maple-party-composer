@@ -1,23 +1,36 @@
 import { useMemo } from 'react'
+import { PRESETS } from './bosses.ts'
 import { PartyResults } from './components/PartyResults.tsx'
 import { RatioGrid } from './components/RatioGrid.tsx'
 import { CLEAR_THRESHOLD, splitBoss } from './split.ts'
-import type { AppState, Boss } from './types.ts'
+import type { AppState, Boss, Ratios, StoredBoss } from './types.ts'
 import { useStoredState } from './useStoredState.ts'
 
 const EMPTY: AppState = { members: [], bosses: [], ratios: {} }
 
+const withoutBosses = (ratios: Ratios, bossIds: Set<string>): Ratios =>
+  Object.fromEntries(
+    Object.entries(ratios).map(([memberId, byBoss]) => [
+      memberId,
+      Object.fromEntries(Object.entries(byBoss).filter(([bossId]) => !bossIds.has(bossId))),
+    ]),
+  )
+
 export default function App() {
   const [state, setState] = useStoredState<AppState>('maple-party-split', EMPTY)
   const { members, ratios } = state
-  // 목표 배율이 없던 이전 데이터는 기본값으로
+  // 보스 목록에 없는 이전 데이터(직접 입력한 보스)는 버리고, 목표 배율이 없으면 기본값으로
   const bosses = useMemo(
-    () => state.bosses.map((b) => ({ ...b, targetRatio: b.targetRatio ?? CLEAR_THRESHOLD })),
+    () =>
+      state.bosses.flatMap((b): Boss[] => {
+        const preset = PRESETS.get(b.id)
+        return preset ? [{ ...preset, targetRatio: b.targetRatio ?? CLEAR_THRESHOLD }] : []
+      }),
     [state.bosses],
   )
 
   const splits = useMemo(
-    () => bosses.map((boss) => splitBoss(boss, members, ratios)),
+    () => bosses.toSorted((a, b) => a.order - b.order).map((boss) => splitBoss(boss, members, ratios)),
     [bosses, members, ratios],
   )
 
@@ -36,28 +49,26 @@ export default function App() {
       return { ...s, members: s.members.filter((m) => m.id !== id), ratios }
     })
 
-  const addBoss = () =>
-    setState((s) => ({
-      ...s,
-      bosses: [
-        ...s.bosses,
-        { id: crypto.randomUUID(), name: `보스 ${s.bosses.length + 1}`, targetRatio: CLEAR_THRESHOLD },
-      ],
-    }))
+  /** 모달에서 고른 목록으로 교체. 기존 보스는 순서·목표 배율 유지, 빠진 보스는 배율도 삭제 */
+  const selectBosses = (ids: string[]) =>
+    setState((s) => {
+      const selected = new Set(ids)
+      const kept = s.bosses.filter((b) => selected.has(b.id))
+      const added = ids
+        .filter((id) => !kept.some((b) => b.id === id))
+        .map((id) => ({ id, targetRatio: CLEAR_THRESHOLD }))
+      const removed = new Set(s.bosses.filter((b) => !selected.has(b.id)).map((b) => b.id))
+      return { ...s, bosses: [...kept, ...added], ratios: withoutBosses(s.ratios, removed) }
+    })
 
-  const changeBoss = (id: string, patch: Partial<Omit<Boss, 'id'>>) =>
+  const changeBoss = (id: string, patch: Partial<Omit<StoredBoss, 'id'>>) =>
     setState((s) => ({ ...s, bosses: s.bosses.map((b) => (b.id === id ? { ...b, ...patch } : b)) }))
 
   const removeBoss = (id: string) =>
     setState((s) => ({
       ...s,
       bosses: s.bosses.filter((b) => b.id !== id),
-      ratios: Object.fromEntries(
-        Object.entries(s.ratios).map(([memberId, byBoss]) => {
-          const { [id]: _removed, ...rest } = byBoss
-          return [memberId, rest]
-        }),
-      ),
+      ratios: withoutBosses(s.ratios, new Set([id])),
     }))
 
   const changeRatio = (memberId: string, bossId: string, ratio: number | null) =>
@@ -80,7 +91,7 @@ export default function App() {
         onAddMember={addMember}
         onRenameMember={renameMember}
         onRemoveMember={removeMember}
-        onAddBoss={addBoss}
+        onSelectBosses={selectBosses}
         onChangeBoss={changeBoss}
         onRemoveBoss={removeBoss}
         onChangeRatio={changeRatio}

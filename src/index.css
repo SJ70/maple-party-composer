@@ -156,6 +156,12 @@ button.ghost:hover {
   width: 100%;
 }
 
+.head-box .boss-label {
+  flex: 1;
+  min-width: 0;
+  padding-left: 2px;
+}
+
 .player-head,
 .boss-head {
   border: 1px solid var(--border);
@@ -220,7 +226,7 @@ button.add:hover {
 
 .result-boss {
   flex: none;
-  width: 160px;
+  width: 210px;
   display: grid;
   border: 1px solid var(--border);
   border-radius: 8px;
@@ -270,4 +276,224 @@ button.add:hover {
 
 .party.unassigned strong {
   color: var(--danger);
+}
+
+.boss-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.boss-label-text {
+  display: grid;
+  justify-items: start;
+  gap: 2px;
+  line-height: 1.2;
+  word-break: keep-all;
+}
+
+.boss-image {
+  flex: none;
+  width: 36px;
+  height: 36px;
+  border-radius: 6px;
+  object-fit: cover;
+  background: var(--bg);
+}
+
+/* 난이도 배지 */
+.difficulty {
+  display: inline-block;
+  /* 난이도끼리 같은 너비 (EXTREME 기준) */
+  width: 64px;
+  padding: 2px 0;
+  text-align: center;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  line-height: 1.4;
+  color: #ffffff;
+}
+
+.difficulty.easy {
+  background: #a2aab2;
+  color: #f2f4f6;
+}
+
+.difficulty.normal {
+  background: #36a6c7;
+}
+
+.difficulty.hard {
+  background: #dc4a7d;
+}
+
+.difficulty.chaos {
+  background: #3a393c;
+  border-color: #b89656;
+  color: #f2d48c;
+}
+
+.difficulty.extreme {
+  background: #3a393c;
+  border-color: #e0493b;
+  color: #ff6b52;
+}
+
+.boss-modal {
+  width: min(700px, calc(100vw - 32px));
+  max-height: calc(100vh - 64px);
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--surface);
+  color: var(--text);
+}
+
+.boss-modal[open] {
+  display: flex;
+  flex-direction: column;
+}
+
+.boss-modal::backdrop {
+  background: rgb(0 0 0 / 0.45);
+}
+
+.boss-modal-head,
+.boss-modal-foot {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 20px;
+}
+
+.boss-modal-head {
+  justify-content: space-between;
+  border-bottom: 1px solid var(--border);
+}
+
+.boss-modal-head h2 {
+  font-size: 1.1rem;
+}
+
+.boss-modal-foot {
+  justify-content: flex-end;
+  border-top: 1px solid var(--border);
+}
+
+.boss-modal-foot .muted {
+  margin-right: auto;
+}
+
+.boss-modal-list {
+  margin: 0;
+  padding: 8px 20px;
+  list-style: none;
+  overflow: auto;
+}
+
+.boss-modal-list li {
+  display: grid;
+  grid-template-columns: minmax(160px, 1fr) auto;
+  align-items: center;
+  gap: 6px 8px;
+  padding: 6px 0;
+  white-space: nowrap;
+}
+
+.boss-modal-name {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  font-size: 0.75rem;
+}
+
+/* 가진 난이도만 왼쪽부터 채움. 칸 너비를 고정해 행끼리 시작점을 맞춘다 */
+.boss-modal-difficulties {
+  display: grid;
+  grid-template-columns: repeat(4, 88px);
+  gap: 6px 10px;
+}
+
+.boss-modal-list li + li {
+  border-top: 1px solid var(--border);
+}
+
+.difficulty-option {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+}
+
+.difficulty-option input {
+  margin: 0;
+  width: 14px;
+  height: 14px;
+  accent-color: var(--accent);
+  cursor: pointer;
+}
+
+/* 좁은 화면: 왼쪽에 이미지 + 이름, 오른쪽에 난이도 세로로 */
+@media (max-width: 640px) {
+  /* 모든 항목에 윗줄을 긋고 맨 윗줄은 헤더 경계선과 겹침 */
+  .boss-modal-list {
+    display: grid;
+    margin-top: -1px;
+    padding: 0 20px 4px;
+  }
+
+  .boss-modal-list li {
+    grid-template-columns: 84px max-content;
+    justify-content: space-between;
+    align-items: start;
+    gap: 12px;
+    padding: 12px 0;
+    border-top: 1px solid var(--border);
+  }
+
+  .boss-modal-name {
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    line-height: 1.25;
+    text-align: center;
+    white-space: normal;
+    word-break: keep-all;
+  }
+
+  .boss-modal-name .boss-image {
+    width: 84px;
+    height: 84px;
+  }
+
+  .boss-modal-difficulties {
+    grid-template-columns: max-content;
+    grid-auto-rows: 20px;
+    gap: 8px;
+  }
+}
+
+/* 보스 2개가 들어가는 폭이면 2열. 세로선은 끝까지 잇고, 가로선은 세로선과 맞닿지 않게 띄움 */
+@media (min-width: 500px) and (max-width: 640px) {
+  .boss-modal-list {
+    grid-template-columns: 1fr 1fr;
+    column-gap: 40px;
+  }
+
+  .boss-modal-list li {
+    position: relative;
+  }
+
+  .boss-modal-list li:nth-child(odd)::after {
+    content: '';
+    position: absolute;
+    top: -1px;
+    right: -20px;
+    bottom: 0;
+    border-right: 1px solid var(--border);
+  }
 }

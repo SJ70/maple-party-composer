@@ -1,4 +1,5 @@
 import type { BossSplit, PartySlot } from '../types.ts'
+import { BossLabel } from './BossLabel.tsx'
 
 const percent = (n: number) => `${Math.round(n)}%`
 const sum = (slots: PartySlot[]) => slots.reduce((total, s) => total + s.ratio, 0)
@@ -32,7 +33,7 @@ export function PartyResults({ splits }: { splits: BossSplit[] }) {
         {splits.map(({ boss, parties, unassigned }) => (
           <div key={boss.id} className="result-row">
             <div className="result-boss">
-              <strong>{boss.name}</strong>
+              <BossLabel boss={boss} />
               <span className="muted">목표 {percent(boss.targetRatio)}</span>
             </div>
             <div className="result-parties">

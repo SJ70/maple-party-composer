@@ -1,5 +1,7 @@
 import { CLEAR_THRESHOLD } from '../split.ts'
-import type { Boss, Member, Ratios } from '../types.ts'
+import type { Boss, Member, Ratios, StoredBoss } from '../types.ts'
+import { BossLabel } from './BossLabel.tsx'
+import { BossSelect } from './BossSelect.tsx'
 
 type Props = {
   members: Member[]
@@ -8,8 +10,8 @@ type Props = {
   onAddMember: () => void
   onRenameMember: (id: string, name: string) => void
   onRemoveMember: (id: string) => void
-  onAddBoss: () => void
-  onChangeBoss: (id: string, patch: Partial<Omit<Boss, 'id'>>) => void
+  onSelectBosses: (ids: string[]) => void
+  onChangeBoss: (id: string, patch: Partial<Omit<StoredBoss, 'id'>>) => void
   onRemoveBoss: (id: string) => void
   onChangeRatio: (memberId: string, bossId: string, ratio: number | null) => void
 }
@@ -22,7 +24,7 @@ export function RatioGrid({
   onAddMember,
   onRenameMember,
   onRemoveMember,
-  onAddBoss,
+  onSelectBosses,
   onChangeBoss,
   onRemoveBoss,
   onChangeRatio,
@@ -60,11 +62,7 @@ export function RatioGrid({
               <tr key={b.id}>
                 <th scope="row" className="boss-head">
                   <div className="head-box">
-                    <input
-                      value={b.name}
-                      onChange={(e) => onChangeBoss(b.id, { name: e.target.value })}
-                      aria-label="보스 이름"
-                    />
+                    <BossLabel boss={b} />
                     <button className="ghost" onClick={() => onRemoveBoss(b.id)} aria-label={`${b.name} 삭제`}>
                       ✕
                     </button>
@@ -117,9 +115,7 @@ export function RatioGrid({
             ))}
             <tr>
               <th scope="row">
-                <button className="add" onClick={onAddBoss}>
-                  + 보스
-                </button>
+                <BossSelect bosses={bosses} onApply={onSelectBosses} />
               </th>
             </tr>
           </tbody>
