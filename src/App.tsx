@@ -19,18 +19,20 @@ const withoutBosses = (ratios: Ratios, bossIds: Set<string>): Ratios =>
 export default function App() {
   const [state, setState] = useStoredState<AppState>('maple-party-split', EMPTY)
   const { members, ratios } = state
-  // 보스 목록에 없는 이전 데이터(직접 입력한 보스)는 버리고, 목표 배율이 없으면 기본값으로
+  // 보스 목록에 없는 이전 데이터(직접 입력한 보스)는 버리고, 목표 배율이 없으면 기본값으로. 배율 입력·결과 모두 정렬 순서로
   const bosses = useMemo(
     () =>
-      state.bosses.flatMap((b): Boss[] => {
-        const preset = PRESETS.get(b.id)
-        return preset ? [{ ...preset, targetRatio: b.targetRatio ?? CLEAR_THRESHOLD }] : []
-      }),
+      state.bosses
+        .flatMap((b): Boss[] => {
+          const preset = PRESETS.get(b.id)
+          return preset ? [{ ...preset, targetRatio: b.targetRatio ?? CLEAR_THRESHOLD }] : []
+        })
+        .toSorted((a, b) => a.order - b.order),
     [state.bosses],
   )
 
   const splits = useMemo(
-    () => bosses.toSorted((a, b) => a.order - b.order).map((boss) => splitBoss(boss, members, ratios)),
+    () => bosses.map((boss) => splitBoss(boss, members, ratios)),
     [bosses, members, ratios],
   )
 
@@ -49,7 +51,7 @@ export default function App() {
       return { ...s, members: s.members.filter((m) => m.id !== id), ratios }
     })
 
-  /** 모달에서 고른 목록으로 교체. 기존 보스는 순서·목표 배율 유지, 빠진 보스는 배율도 삭제 */
+  /** 모달에서 고른 목록으로 교체. 기존 보스는 목표 배율 유지, 빠진 보스는 배율도 삭제 */
   const selectBosses = (ids: string[]) =>
     setState((s) => {
       const selected = new Set(ids)

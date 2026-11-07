@@ -8,7 +8,7 @@ export const DIFFICULTIES = {
 } as const
 export type Difficulty = keyof typeof DIFFICULTIES
 
-/** 보스 선택 목록 순서. 이미지 = src/assets/bosses/{name}.webp */
+/** 보스 선택 목록 순서. 배율 입력·조합 결과도 이 순서 → 난이도 순. 이미지 = src/assets/bosses/{name}.webp */
 const BOSSES = [
   { id: 'lotus', name: '스우' },
   { id: 'damien', name: '데미안' },
@@ -31,8 +31,8 @@ const BOSSES = [
 ] as const
 type BossId = (typeof BOSSES)[number]['id']
 
-/** 조합 결과 정렬 순서. 여기 있는 조합만 추가할 수 있다 */
-const RESULT_ORDER: [BossId, Difficulty][] = [
+/** 추가할 수 있는 보스 + 난이도 조합 */
+const AVAILABLE: [BossId, Difficulty][] = [
   ['baldrix', 'extreme'],
   ['limbo', 'extreme'],
   ['jupiter', 'hard'],
@@ -99,24 +99,27 @@ export type BossPreset = {
   /** 예: 하드 루시드 */
   name: string
   image: string | undefined
-  /** 조합 결과 정렬 순서 */
+  /** 정렬 순서 (보스 선택 목록 순 → 난이도 순) */
   order: number
 }
 
 export const presetId = (bossId: string, difficulty: Difficulty) => `${bossId}-${difficulty}`
 
-export const PRESETS = new Map<string, BossPreset>(
-  RESULT_ORDER.map(([bossId, difficulty], order) => {
-    const boss = BOSSES.find((b) => b.id === bossId)!
-    const id = presetId(bossId, difficulty)
-    const name = `${DIFFICULTIES[difficulty]} ${boss.name}`
-    return [id, { id, bossId, bossName: boss.name, difficulty, name, image: images[boss.name], order }]
-  }),
-)
+const available = new Set(AVAILABLE.map(([bossId, difficulty]) => presetId(bossId, difficulty)))
 
 /** 보스 선택 목록. 각 보스의 난이도는 이지 → 익스트림 순 */
 export const BOSS_OPTIONS = BOSSES.map((b) => ({
   ...b,
   image: images[b.name],
-  difficulties: (Object.keys(DIFFICULTIES) as Difficulty[]).filter((d) => PRESETS.has(presetId(b.id, d))),
+  difficulties: (Object.keys(DIFFICULTIES) as Difficulty[]).filter((d) => available.has(presetId(b.id, d))),
 }))
+
+export const PRESETS = new Map<string, BossPreset>(
+  BOSS_OPTIONS.flatMap((boss) => boss.difficulties.map((difficulty) => ({ boss, difficulty }))).map(
+    ({ boss, difficulty }, order) => {
+      const id = presetId(boss.id, difficulty)
+      const name = `${DIFFICULTIES[difficulty]} ${boss.name}`
+      return [id, { id, bossId: boss.id, bossName: boss.name, difficulty, name, image: boss.image, order }]
+    },
+  ),
+)
