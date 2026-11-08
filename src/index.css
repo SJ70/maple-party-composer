@@ -325,20 +325,16 @@ button.add:hover {
 }
 
 .avatar {
-  /* 높이 기준 정원. 글자 크기는 원 크기에 비례 */
+  /* 높이 기준 정원. container query(cqh)로 글자 크기를 맞추면 입력할 때마다 레이아웃이 수 초씩 걸려서 고정 크기 사용 */
   height: 100%;
   aspect-ratio: 1;
-  container-type: size;
   border-radius: 50%;
   display: grid;
   place-items: center;
+  font-size: 1.75rem;
   font-weight: 700;
   color: #ffffff;
   margin-bottom: 2px;
-}
-
-.avatar > span {
-  font-size: 45cqh;
 }
 
 .party-members .result-name {
