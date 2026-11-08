@@ -215,58 +215,150 @@ button.add:hover {
 
 .results {
   display: grid;
-  gap: 8px;
+  gap: 12px;
 }
 
+/* 보스 카드 + 파티 카드를 한 줄로. 행 높이는 보스 카드가 정함 */
 .result-row {
   display: flex;
   gap: 8px;
-  align-items: flex-start;
 }
 
-.result-boss {
-  flex: none;
-  width: 210px;
-  display: grid;
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 8px 10px;
-}
-
+/* 보스 카드는 고정, 파티 카드만 넘치면 가로 스크롤 */
 .result-parties {
   flex: 1;
   min-width: 0;
   display: flex;
-  flex-wrap: wrap;
   gap: 8px;
+  overflow-x: auto;
 }
 
-.result-parties > p {
-  margin: 8px 0;
-}
-
-.party {
-  width: 200px;
+.result-card {
+  flex: none;
   border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 8px 12px;
+  border-radius: 10px;
+  padding: 14px 16px;
 }
 
-.party-head {
+.result-name {
+  font-size: 0.75rem;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.result-boss {
+  width: 160px;
   display: flex;
-  justify-content: space-between;
-  gap: 8px;
-  flex-wrap: wrap;
-  font-size: 0.9em;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  text-align: center;
 }
 
-.party-head span {
+.result-boss .boss-image {
+  width: 96px;
+  height: 96px;
+  border-radius: 8px;
+  margin-bottom: 2px;
+}
+
+.result-target {
+  font-size: 0.75rem;
   color: var(--muted);
 }
 
-.party ul {
-  margin: 6px 0 0;
-  padding-left: 18px;
+/* 목표배율 · 솔플배율 · 딜점유율 라벨 */
+.result-label {
+  font-size: 0.6875rem;
+  color: var(--muted);
+}
+
+.result-value {
+  font-weight: 700;
+  color: var(--muted);
+}
+
+.result-boss .result-name {
+  font-size: 0.875rem;
+}
+
+.result-empty {
+  display: flex;
+  align-items: center;
+}
+
+.party {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  gap: 12px;
+}
+
+/* 솔플배율 · 딜점유율 행과 같은 모양, 값만 강조색 */
+.party-head {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  font-size: 0.75rem;
+}
+
+.party-head .result-value {
+  color: var(--accent);
+}
+
+.party-members {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  gap: 12px;
+}
+
+/* 아바타가 이름 · 배율을 뺀 남은 높이를 차지 */
+.party-members li {
+  min-width: 72px;
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) auto auto;
+  justify-items: center;
+  gap: 4px;
+}
+
+.avatar {
+  /* 높이 기준 정원. 글자 크기는 원 크기에 비례 */
+  height: 100%;
+  aspect-ratio: 1;
+  container-type: size;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-weight: 700;
+  color: #ffffff;
+  margin-bottom: 2px;
+}
+
+.avatar > span {
+  font-size: 45cqh;
+}
+
+.party-members .result-name {
+  font-size: 0.875rem;
+  font-weight: 700;
+}
+
+.party-members dl {
+  margin: 0;
+  display: grid;
+  grid-template-columns: auto auto;
+  align-items: baseline;
+  gap: 0 8px;
+  font-size: 0.75rem;
+}
+
+.party-members dd {
+  margin: 0;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
 }
 
 .party.unassigned {
@@ -274,7 +366,7 @@ button.add:hover {
   border-color: transparent;
 }
 
-.party.unassigned strong {
+.party.unassigned .party-head > * {
   color: var(--danger);
 }
 
