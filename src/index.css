@@ -97,9 +97,21 @@ button.ghost:hover {
   gap: 16px;
 }
 
+/* 왼쪽 제목 · 부제목, 오른쪽 아래 설정 버튼. 좁으면 버튼이 아래 줄로 */
 .app header {
-  display: grid;
-  gap: 4px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 8px 16px;
+}
+
+.app-title h1 {
+  line-height: 1.3;
+}
+
+.app-title p {
+  margin: 12px 0 0;
 }
 
 .card {
@@ -202,15 +214,6 @@ button.ghost:hover {
   font-weight: normal;
 }
 
-/* 입력 그리드에선 보스 이름을 화면에서만 숨김 (스크린 리더용 열 이름으로는 남김) */
-.boss-head .result-name {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  overflow: hidden;
-  clip-path: inset(50%);
-}
-
 /* % 단위를 입력칸 안쪽 오른쪽에. 테두리 · 포커스 표시는 바깥 상자가 대신 */
 .percent-input {
   display: flex;
@@ -277,13 +280,14 @@ button.ghost:hover {
   vertical-align: middle;
 }
 
-/* 유저 설정 · 보스 설정 버튼 (표 위) */
+/* 파티 설정 · 보스 설정 버튼 (헤더 오른쪽 아래) */
 .grid-toolbar {
   display: flex;
   gap: 8px;
+  margin-left: auto;
 }
 
-/* 유저 설정 · 보스 설정 · 모달의 취소 · 적용 */
+/* 파티 설정 · 보스 설정 · 모달의 취소 · 적용 */
 .grid-toolbar button,
 .modal-foot button {
   font-size: 0.875rem;
@@ -337,8 +341,10 @@ button.add:hover {
   white-space: nowrap;
 }
 
+/* 이미지(96px) + "목표배율 [입력칸]" 이 들어가는 너비 */
 .result-boss {
-  width: 160px;
+  width: 124px;
+  padding: 14px 12px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -367,10 +373,6 @@ button.add:hover {
 .result-value {
   font-weight: 700;
   color: var(--muted);
-}
-
-.result-boss .result-name {
-  font-size: 0.875rem;
 }
 
 .result-empty {
@@ -404,11 +406,11 @@ button.add:hover {
   gap: 12px;
 }
 
-/* 아바타가 이름 · 유저 · 배율을 뺀 남은 높이를 차지 */
+/* 아바타가 이름 · 배율을 뺀 남은 높이를 차지 */
 .party-members li {
   min-width: 72px;
   display: grid;
-  grid-template-rows: minmax(0, 1fr) auto auto auto;
+  grid-template-rows: minmax(0, 1fr) auto auto;
   justify-items: center;
   gap: 4px;
 }
@@ -433,12 +435,6 @@ button.add:hover {
 .party-members .result-name {
   font-size: 0.875rem;
   font-weight: 700;
-}
-
-.party-members .result-user {
-  margin-top: -4px;
-  font-size: 0.6875rem;
-  color: var(--muted);
 }
 
 .party-members dl {

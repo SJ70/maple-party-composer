@@ -78,7 +78,7 @@ export function UserSettings({ users, characters, onApply }: Props) {
   return (
     <>
       <button onClick={open}>
-        유저 설정
+        파티 설정
       </button>
       <dialog
         ref={dialog}
@@ -88,7 +88,7 @@ export function UserSettings({ users, characters, onApply }: Props) {
         onClick={(e) => e.target === e.currentTarget && close()}
       >
         <div className="modal-head">
-          <h2 id="user-modal-title">유저 설정</h2>
+          <h2 id="user-modal-title">파티 설정</h2>
           <button className="ghost" onClick={close} aria-label="닫기">
             ✕
           </button>

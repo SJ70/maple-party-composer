@@ -24,13 +24,12 @@ function Avatar({ character, userColor }: { character: Character; userColor: str
 type PartyCardProps = {
   title: string
   slots: PartySlot[]
-  userNames: Map<string, string>
   colors: Map<string, string>
   className?: string
 }
 
-/** 상단 파티 배율 합계, 아래로 캐릭터별 아바타 · 캐릭터 이름 · 유저 이름 · 솔플배율 · 딜점유율(솔플배율 / 합계) */
-function PartyCard({ title, slots, userNames, colors, className = '' }: PartyCardProps) {
+/** 상단 파티 배율 합계, 아래로 캐릭터별 아바타 · 캐릭터 이름 · 솔플배율 · 딜점유율(솔플배율 / 합계) */
+function PartyCard({ title, slots, colors, className = '' }: PartyCardProps) {
   const total = sum(slots)
   return (
     <div className={`result-card party ${className}`}>
@@ -43,7 +42,6 @@ function PartyCard({ title, slots, userNames, colors, className = '' }: PartyCar
           <li key={s.character.id}>
             <Avatar character={s.character} userColor={colors.get(s.character.userId)} />
             <strong className="result-name">{s.character.name}</strong>
-            <span className="result-name result-user">{userNames.get(s.character.userId)}</span>
             <dl>
               <dt className="result-label">솔플배율</dt>
               <dd className="result-value">{percent(s.ratio, 2)}</dd>
@@ -60,7 +58,6 @@ function PartyCard({ title, slots, userNames, colors, className = '' }: PartyCar
 /** 행 = 보스, 보스 카드 오른쪽으로 해당 보스의 파티 카드들 */
 export function PartyResults({ splits, users }: { splits: BossSplit[]; users: User[] }) {
   if (splits.length === 0) return null
-  const userNames = new Map(users.map((u) => [u.id, u.name]))
   const colors = userColors(users)
 
   return (
@@ -75,9 +72,9 @@ export function PartyResults({ splits, users }: { splits: BossSplit[]; users: Us
                 <div className="result-card result-empty muted">참여 인원 없음</div>
               )}
               {parties.map((party, i) => (
-                <PartyCard key={i} title="파티배율" slots={party.slots} userNames={userNames} colors={colors} />
+                <PartyCard key={i} title="파티배율" slots={party.slots} colors={colors} />
               ))}
-              {unassigned.length > 0 && <PartyCard title="클리어 불가" slots={unassigned} userNames={userNames} colors={colors} className="unassigned" />}
+              {unassigned.length > 0 && <PartyCard title="클리어 불가" slots={unassigned} colors={colors} className="unassigned" />}
             </div>
           </div>
         ))}

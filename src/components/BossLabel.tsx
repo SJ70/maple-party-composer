@@ -10,17 +10,16 @@ export function DifficultyBadge({ difficulty }: { difficulty: Difficulty }) {
   )
 }
 
-export function BossImage({ src }: { src: string | undefined }) {
-  return src ? <img className="boss-image" src={src} alt="" /> : <span className="boss-image" />
+export function BossImage({ src, alt = '' }: { src: string | undefined; alt?: string }) {
+  return src ? <img className="boss-image" src={src} alt={alt} /> : <span className="boss-image" />
 }
 
-/** 이미지 · 난이도 배지 · 보스 이름 · 목표배율. target = 목표배율 자리 (결과는 값, 입력 그리드는 입력칸) */
+/** 이미지 · 난이도 배지 · 목표배율. 보스 이름은 화면에 안 쓰고 이미지 대체 텍스트 · 툴팁으로만. target = 목표배율 자리 (결과는 값, 입력 그리드는 입력칸) */
 export function BossCard({ boss, target }: { boss: Boss; target: ReactNode }) {
   return (
-    <div className="result-card result-boss">
-      <BossImage src={boss.image} />
+    <div className="result-card result-boss" title={boss.name}>
+      <BossImage src={boss.image} alt={boss.name} />
       <DifficultyBadge difficulty={boss.difficulty} />
-      <strong className="result-name">{boss.bossName}</strong>
       <span className="result-target">
         <span className="result-label">목표배율</span> {target}
       </span>

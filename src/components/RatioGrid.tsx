@@ -3,17 +3,13 @@ import type { CSSProperties } from 'react'
 import type { Boss, Character, Ratios, StoredBoss, User } from '../types.ts'
 import { userColors } from '../userColors.ts'
 import { BossCard } from './BossLabel.tsx'
-import { BossSelect } from './BossSelect.tsx'
 import { JobPortrait } from './JobPortrait.tsx'
-import { UserSettings } from './UserSettings.tsx'
 
 type Props = {
   users: User[]
   characters: Character[]
   bosses: Boss[]
   ratios: Ratios
-  onApplyUsers: (users: User[], characters: Character[]) => void
-  onSelectBosses: (ids: string[]) => void
   onChangeBoss: (id: string, patch: Partial<Omit<StoredBoss, 'id'>>) => void
   onChangeRatio: (characterId: string, bossId: string, ratio: number | null) => void
 }
@@ -49,8 +45,6 @@ export function RatioGrid({
   characters,
   bosses,
   ratios,
-  onApplyUsers,
-  onSelectBosses,
   onChangeBoss,
   onChangeRatio,
 }: Props) {
@@ -61,10 +55,7 @@ export function RatioGrid({
 
   return (
     <section className="card">
-      <div className="grid-toolbar">
-        <UserSettings users={users} characters={characters} onApply={onApplyUsers} />
-        <BossSelect bosses={bosses} onApply={onSelectBosses} />
-      </div>
+      <h2>보스 · 파티 배율 설정</h2>
       <div className="table-scroll">
         <table className="grid">
           <thead>

@@ -1,7 +1,9 @@
 import { useMemo } from 'react'
 import { PRESETS } from './bosses.ts'
+import { BossSelect } from './components/BossSelect.tsx'
 import { PartyResults } from './components/PartyResults.tsx'
 import { RatioGrid } from './components/RatioGrid.tsx'
+import { UserSettings } from './components/UserSettings.tsx'
 import { CLEAR_THRESHOLD, splitBoss } from './split.ts'
 import type { AppState, Boss, Character, Ratios, StoredBoss, User } from './types.ts'
 import { useStoredState } from './useStoredState.ts'
@@ -88,16 +90,20 @@ export default function App() {
   return (
     <main className="app">
       <header>
-        <h1>메이플스토리 보스 파티 조합기</h1>
-        <p className="muted">캐릭터별 보스 클리어 배율을 입력하면, 최적의 보스 파티를 구성해줍니다. 같은 유저의 캐릭터끼리는 한 파티가 되지 않습니다.</p>
+        <div className="app-title">
+          <h1>메이플스토리 보스 파티 조합기</h1>
+          <p className="muted">캐릭터별 배율에 따라 최적의 보스 파티를 구성해줍니다.</p>
+        </div>
+        <div className="grid-toolbar">
+          <UserSettings users={users} characters={characters} onApply={applyUsers} />
+          <BossSelect bosses={bosses} onApply={selectBosses} />
+        </div>
       </header>
       <RatioGrid
         users={users}
         characters={characters}
         bosses={bosses}
         ratios={ratios}
-        onApplyUsers={applyUsers}
-        onSelectBosses={selectBosses}
         onChangeBoss={changeBoss}
         onChangeRatio={changeRatio}
       />
