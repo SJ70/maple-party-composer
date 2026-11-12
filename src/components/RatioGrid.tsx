@@ -129,7 +129,7 @@ export function RatioGrid({
                             type="number"
                             min={0}
                             step={0.01}
-                            defaultValue={ratios[c.id]?.[b.id] ?? 0}
+                            defaultValue={ratios[c.id]?.[b.id] ?? ''}
                             onFocus={(e) => e.target.select()}
                             onChange={(e) => {
                               const v = Number(e.target.value)
@@ -137,7 +137,8 @@ export function RatioGrid({
                               onChangeRatio(c.id, b.id, v > 0 ? v : null)
                             }}
                             onBlur={(e) => {
-                              if (e.target.value === '') e.target.value = '0'
+                              // 불참은 0 대신 빈 칸으로
+                              if (!(Number(e.target.value) > 0)) e.target.value = ''
                             }}
                             aria-label={`${c.name} ${b.name} 배율`}
                           />

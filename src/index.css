@@ -272,8 +272,7 @@ button.ghost:hover {
 
 .ratio-input input {
   font-weight: 700;
-}
-/* 보스 카드의 목표배율과 같은 모양으로 가운데 정렬 */
+}/* 보스 카드의 목표배율과 같은 모양으로 가운데 정렬 */
 .grid .ratio-cell {
   text-align: center;
   vertical-align: middle;
