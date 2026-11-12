@@ -513,6 +513,7 @@ button.add:hover {
 .result-empty {
   display: flex;
   align-items: center;
+  font-size: 0.6875rem;
 }
 
 .party {
