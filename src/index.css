@@ -363,6 +363,27 @@ button.add:hover {
   color: var(--muted);
 }
 
+/* 목표인원 · 목표배율 두 줄 묶음. 입력 그리드는 입력칸 테두리끼리 붙지 않을 만큼만 띄움 */
+.boss-targets {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+/* 결과의 보스 카드: 파티 카드의 솔플배율 · 딜점유율처럼 줄 간격 없이, 라벨은 왼쪽 · 값은 오른쪽 끝으로 */
+.results .boss-targets {
+  align-self: stretch;
+  align-items: stretch;
+  gap: 0;
+}
+
+.results .result-target {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
 /* 목표배율 · 솔플배율 · 딜점유율 라벨 */
 .result-label {
   font-size: 0.6875rem;

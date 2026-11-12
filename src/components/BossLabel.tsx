@@ -23,12 +23,14 @@ export function BossCard({ boss, players, target }: { boss: Boss; players: React
     <div className="result-card result-boss" title={boss.name}>
       <BossImage src={boss.image} alt={boss.name} />
       <DifficultyBadge difficulty={boss.difficulty} />
-      <span className="result-target">
-        <span className="result-label">목표인원</span> {players}
-      </span>
-      <span className="result-target">
-        <span className="result-label">목표배율</span> {target}
-      </span>
+      <div className="boss-targets">
+        <span className="result-target">
+          <span className="result-label">목표인원</span> {players}
+        </span>
+        <span className="result-target">
+          <span className="result-label">목표배율</span> {target}
+        </span>
+      </div>
     </div>
   )
 }
