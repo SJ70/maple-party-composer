@@ -8,6 +8,8 @@
   --accent-text: #ffffff;
   --danger: #c43c3c;
   --danger-bg: #fbeeee;
+  --row-focus: #fdf0e4;
+  --row-hover: #f5f5f7;
 
   font-family: system-ui, 'Segoe UI', 'Malgun Gothic', sans-serif;
   line-height: 1.5;
@@ -26,6 +28,8 @@
     --accent-text: #1a1206;
     --danger: #ef7d7d;
     --danger-bg: #2c1a1c;
+    --row-focus: #2d241c;
+    --row-hover: #232227;
   }
 }
 
@@ -276,6 +280,29 @@ button.ghost:hover {
 .grid .ratio-cell {
   text-align: center;
   vertical-align: middle;
+}
+
+/* 마우스를 올린 행은 회색, 솔플배율 입력 중인 행은 주황 (둘 다면 주황).
+   칸 간격(8px)을 양쪽 4px 그림자로 메워 한 줄 띠로 이음 */
+.grid tbody tr:hover {
+  --row-tint: var(--row-hover);
+}
+
+.grid tbody tr:has(.ratio-cell input:focus) {
+  --row-tint: var(--row-focus);
+}
+
+.grid tbody tr:is(:hover, :has(.ratio-cell input:focus)) > :is(.character-head, .ratio-cell) {
+  background: var(--row-tint);
+  box-shadow: 0 0 0 4px var(--row-tint);
+}
+
+.grid tbody tr:is(:hover, :has(.ratio-cell input:focus)) > .character-head {
+  border-radius: 6px 0 0 6px;
+}
+
+.grid tbody tr:is(:hover, :has(.ratio-cell input:focus)) > .ratio-cell:last-child {
+  border-radius: 0 6px 6px 0;
 }
 
 /* 파티 설정 · 보스 설정 버튼 (헤더 오른쪽 아래) */
