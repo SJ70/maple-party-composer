@@ -8,7 +8,7 @@ type Props = {
   onApply: (ids: string[]) => void
 }
 
-/** "보스 설정" 버튼과 보스별 난이도를 체크하는 모달 */
+/** "보스 선택" 버튼과 보스별 난이도를 체크하는 모달 */
 export function BossSelect({ bosses, onApply }: Props) {
   const dialog = useRef<HTMLDialogElement>(null)
   const [checked, setChecked] = useState<Set<string>>(new Set())
@@ -36,7 +36,7 @@ export function BossSelect({ bosses, onApply }: Props) {
   return (
     <>
       <button onClick={open}>
-        보스 설정
+        보스 선택
       </button>
       <dialog
         ref={dialog}

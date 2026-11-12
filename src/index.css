@@ -343,14 +343,14 @@ button.theme-toggle:hover {
   border-radius: 0 6px 6px 0;
 }
 
-/* 파티 설정 · 보스 설정 버튼 (헤더 오른쪽 아래) */
+/* 파티 설정 · 보스 선택 버튼 (헤더 오른쪽 아래) */
 .grid-toolbar {
   display: flex;
   gap: 8px;
   margin-left: auto;
 }
 
-/* 파티 설정 · 보스 설정 · 모달의 취소 · 적용 */
+/* 파티 설정 · 보스 선택 · 모달의 취소 · 적용 */
 .grid-toolbar button,
 .modal-foot button {
   font-size: 0.875rem;
