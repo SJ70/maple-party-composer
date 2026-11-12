@@ -67,8 +67,8 @@ export function UserSettings({ users, characters, onApply }: Props) {
 
   return (
     <>
-      <button className="add" onClick={open}>
-        + 유저
+      <button onClick={open}>
+        유저 설정
       </button>
       <dialog
         ref={dialog}

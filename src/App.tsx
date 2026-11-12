@@ -63,25 +63,6 @@ export default function App() {
       return { ...s, users, characters, ratios: withoutCharacters(s.ratios, removed) }
     })
 
-  /** 유저의 캐릭터와 배율도 함께 삭제 */
-  const removeUser = (id: string) =>
-    setState((s) => {
-      const removed = new Set(s.characters.filter((c) => c.userId === id).map((c) => c.id))
-      return {
-        ...s,
-        users: s.users.filter((u) => u.id !== id),
-        characters: s.characters.filter((c) => !removed.has(c.id)),
-        ratios: withoutCharacters(s.ratios, removed),
-      }
-    })
-
-  const removeCharacter = (id: string) =>
-    setState((s) => ({
-      ...s,
-      characters: s.characters.filter((c) => c.id !== id),
-      ratios: withoutCharacters(s.ratios, new Set([id])),
-    }))
-
   /** 모달에서 고른 목록으로 교체. 기존 보스는 목표 배율 유지, 빠진 보스는 배율도 삭제 */
   const selectBosses = (ids: string[]) =>
     setState((s) => {
@@ -96,13 +77,6 @@ export default function App() {
 
   const changeBoss = (id: string, patch: Partial<Omit<StoredBoss, 'id'>>) =>
     setState((s) => ({ ...s, bosses: s.bosses.map((b) => (b.id === id ? { ...b, ...patch } : b)) }))
-
-  const removeBoss = (id: string) =>
-    setState((s) => ({
-      ...s,
-      bosses: s.bosses.filter((b) => b.id !== id),
-      ratios: withoutBosses(s.ratios, new Set([id])),
-    }))
 
   const changeRatio = (characterId: string, bossId: string, ratio: number | null) =>
     setState((s) => {
@@ -123,11 +97,8 @@ export default function App() {
         bosses={bosses}
         ratios={ratios}
         onApplyUsers={applyUsers}
-        onRemoveUser={removeUser}
-        onRemoveCharacter={removeCharacter}
         onSelectBosses={selectBosses}
         onChangeBoss={changeBoss}
-        onRemoveBoss={removeBoss}
         onChangeRatio={changeRatio}
       />
       <PartyResults splits={splits} users={users} />

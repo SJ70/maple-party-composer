@@ -1,7 +1,7 @@
 import type { CSSProperties } from 'react'
-import type { Boss, BossSplit, Character, PartySlot, User } from '../types.ts'
+import type { BossSplit, Character, PartySlot, User } from '../types.ts'
 import { userColors } from '../userColors.ts'
-import { BossImage, DifficultyBadge } from './BossLabel.tsx'
+import { BossCard } from './BossLabel.tsx'
 
 const percent = (n: number, digits = 0) => `${n.toFixed(digits)}%`
 const sum = (slots: PartySlot[]) => slots.reduce((total, s) => total + s.ratio, 0)
@@ -14,19 +14,6 @@ function Avatar({ character, userColor }: { character: Character; userColor: str
     <span className="avatar" style={style} aria-hidden>
       <span>{character.name.trim().charAt(0) || '?'}</span>
     </span>
-  )
-}
-
-function BossCard({ boss }: { boss: Boss }) {
-  return (
-    <div className="result-card result-boss">
-      <BossImage src={boss.image} />
-      <DifficultyBadge difficulty={boss.difficulty} />
-      <strong className="result-name">{boss.bossName}</strong>
-      <span className="result-target">
-        <span className="result-label">목표배율</span> <span className="result-value">{percent(boss.targetRatio)}</span>
-      </span>
-    </div>
   )
 }
 
@@ -78,7 +65,7 @@ export function PartyResults({ splits, users }: { splits: BossSplit[]; users: Us
       <div className="results">
         {splits.map(({ boss, parties, unassigned }) => (
           <div key={boss.id} className="result-row">
-            <BossCard boss={boss} />
+            <BossCard boss={boss} target={<span className="result-value">{percent(boss.targetRatio)}</span>} />
             <div className="result-parties">
               {parties.length === 0 && unassigned.length === 0 && (
                 <div className="result-card result-empty muted">참여 인원 없음</div>

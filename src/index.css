@@ -116,26 +116,16 @@ button.ghost:hover {
   font-size: 1.1rem;
 }
 
-.target-field {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  color: var(--muted);
-  font-size: 0.9em;
-}
-
-.target-field input {
-  width: 56px;
-}
-
+/* 표 바깥 칸 간격(8px)만큼 스크롤 상자를 넓혀 카드 안쪽과 맞춤.
+   표에 음수 margin을 주면 표가 상자 밖으로 삐져나와 내용이 맞아도 스크롤이 생김 */
 .table-scroll {
   overflow-x: auto;
+  margin: -8px;
 }
 
 .grid {
   border-collapse: separate;
   border-spacing: 8px;
-  margin: -8px;
 }
 
 .grid th,
@@ -145,87 +135,118 @@ button.ghost:hover {
   text-align: left;
 }
 
-.head-box {
-  display: flex;
-  align-items: center;
-  gap: 2px;
+/* 유저 색 좌측 띠. 한 유저의 캐릭터 행을 하나로 이음 (유저 설정 모달과 같은 직사각형 띠) */
+.grid .user-band {
+  width: 4px;
+  min-width: 4px;
+  padding: 0;
+  background: var(--user-color);
 }
 
-.head-box input {
-  font-weight: 600;
-  width: 100%;
-}
-
-.head-box .boss-label {
-  flex: 1;
-  min-width: 0;
-  padding-left: 2px;
-}
-
-.user-head,
-.character-head,
-.boss-head {
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 6px;
-  background: var(--surface);
-}
-
-.character-head {
+/* 캐릭터 이름 (편집은 유저 설정 모달에서) */
+.grid .character-head {
   width: 140px;
-  min-width: 140px;
-}
-
-/* 그리드 헤더의 유저 · 캐릭터 이름 (편집은 유저 설정 모달에서) */
-.head-name {
-  flex: 1;
-  min-width: 0;
-  padding: 6px 4px;
+  max-width: 140px;
+  /* 색 띠와의 거리 = 표 칸 간격(8px)만 */
+  padding: 0 4px 0 0;
+  font-size: 0.875rem;
+  vertical-align: middle;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-.user-head .head-name {
-  font-weight: 700;
-}
-
-.user-head {
-  border-top: 3px solid var(--user-color);
-}
-
-.user-dot {
-  flex: none;
-  width: 10px;
-  height: 10px;
-  margin-left: 4px;
-  border-radius: 50%;
-  background: var(--user-color);
-}
-
+/* 보스 열 머리 = 결과의 보스 카드, 목표배율만 입력 */
 .boss-head {
-  width: 160px;
-  min-width: 160px;
+  padding: 0;
+  font-weight: normal;
 }
 
-.boss-head .target-field {
-  margin-top: 4px;
-  padding-left: 4px;
+/* 입력 그리드에선 보스 이름을 화면에서만 숨김 (스크린 리더용 열 이름으로는 남김) */
+.boss-head .result-name {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
 }
 
-.ratio-cell {
+/* % 단위를 입력칸 안쪽 오른쪽에. 테두리 · 포커스 표시는 바깥 상자가 대신 */
+.percent-input {
   display: flex;
   align-items: center;
-  gap: 4px;
-  padding: 6px;
+  gap: 2px;
+  padding: 6px 10px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--bg);
+  cursor: text;
 }
 
-.ratio-cell input {
+.percent-input:focus-within {
+  outline: 2px solid var(--accent);
+  outline-offset: -1px;
+}
+
+.percent-input input {
+  flex: 1;
   width: 100%;
+  padding: 0;
+  border: none;
+  background: transparent;
+  /* 목표배율 칸은 카드의 회색 글자를 물려받지 않게 기본 글자색으로 */
+  color: var(--text);
   text-align: right;
 }
 
-.ratio-cell .unit {
+.percent-input input:focus {
+  outline: none;
+}
+
+/* 숫자 입력 위아래 화살표 숨김 */
+.percent-input input {
+  appearance: textfield;
+  -moz-appearance: textfield;
+}
+
+.percent-input input::-webkit-inner-spin-button,
+.percent-input input::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.percent-input .unit {
   color: var(--muted);
+}
+
+/* 목표배율 · 솔플배율 입력칸 */
+.ratio-input {
+  display: inline-flex;
+  /* 세 자리 숫자 + % 가 들어가는 최소 너비 */
+  width: 48px;
+  padding: 2px 6px;
+}
+
+.ratio-input input {
+  font-weight: 700;
+}
+
+/* 보스 카드의 목표배율과 같은 모양으로 가운데 정렬 */
+.grid .ratio-cell {
+  text-align: center;
+  vertical-align: middle;
+}
+
+/* 유저 설정 · 보스 설정 버튼 (표 위) */
+.grid-toolbar {
+  display: flex;
+  gap: 8px;
+}
+
+/* 유저 설정 · 보스 설정 · 모달의 취소 · 적용 */
+.grid-toolbar button,
+.modal-foot button {
+  font-size: 0.875rem;
+  font-weight: 700;
 }
 
 button.add {
@@ -403,20 +424,6 @@ button.add:hover {
   color: var(--danger);
 }
 
-.boss-label {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.boss-label-text {
-  display: grid;
-  justify-items: start;
-  gap: 2px;
-  line-height: 1.2;
-  word-break: keep-all;
-}
-
 .boss-image {
   flex: none;
   width: 36px;
@@ -500,7 +507,7 @@ button.add:hover {
 }
 
 .modal-head h2 {
-  font-size: 1.1rem;
+  font-size: 1rem;
 }
 
 .modal-foot {
