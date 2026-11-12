@@ -4,8 +4,9 @@ import { BossSelect } from './components/BossSelect.tsx'
 import { PartyResults } from './components/PartyResults.tsx'
 import { RatioGrid } from './components/RatioGrid.tsx'
 import { UserSettings } from './components/UserSettings.tsx'
-import { CLEAR_THRESHOLD, splitBoss } from './split.ts'
+import { CLEAR_THRESHOLD } from './split.ts'
 import type { AppState, Boss, Character, Ratios, StoredBoss, User } from './types.ts'
+import { useBossSplits } from './useBossSplits.ts'
 import { useStoredState } from './useStoredState.ts'
 
 const EMPTY: AppState = { users: [], characters: [], bosses: [], ratios: {} }
@@ -54,10 +55,7 @@ export default function App() {
     [state.bosses],
   )
 
-  const splits = useMemo(
-    () => bosses.map((boss) => splitBoss(boss, characters, ratios)),
-    [bosses, characters, ratios],
-  )
+  const splits = useBossSplits(bosses, characters, ratios)
 
   /** 유저 설정 모달 결과로 교체. 빠진 캐릭터는 배율도 삭제 */
   const applyUsers = (users: User[], characters: Character[]) =>
