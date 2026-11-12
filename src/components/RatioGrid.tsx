@@ -1,60 +1,88 @@
 import { CLEAR_THRESHOLD } from '../split.ts'
-import type { Boss, Member, Ratios, StoredBoss } from '../types.ts'
+import type { CSSProperties } from 'react'
+import type { Boss, Character, Ratios, StoredBoss, User } from '../types.ts'
+import { userColors } from '../userColors.ts'
 import { BossLabel } from './BossLabel.tsx'
 import { BossSelect } from './BossSelect.tsx'
+import { UserSettings } from './UserSettings.tsx'
 
 type Props = {
-  members: Member[]
+  users: User[]
+  characters: Character[]
   bosses: Boss[]
   ratios: Ratios
-  onAddMember: () => void
-  onRenameMember: (id: string, name: string) => void
-  onRemoveMember: (id: string) => void
+  onApplyUsers: (users: User[], characters: Character[]) => void
+  onRemoveUser: (id: string) => void
+  onRemoveCharacter: (id: string) => void
   onSelectBosses: (ids: string[]) => void
   onChangeBoss: (id: string, patch: Partial<Omit<StoredBoss, 'id'>>) => void
   onRemoveBoss: (id: string) => void
-  onChangeRatio: (memberId: string, bossId: string, ratio: number | null) => void
+  onChangeRatio: (characterId: string, bossId: string, ratio: number | null) => void
 }
 
-/** 열 = 플레이어, 행 = 보스, 칸 = 플레이어의 보스 클리어 배율 */
+/** 열 = 캐릭터 (위에 유저별로 묶음), 행 = 보스, 칸 = 캐릭터의 보스 클리어 배율 */
 export function RatioGrid({
-  members,
+  users,
+  characters,
   bosses,
   ratios,
-  onAddMember,
-  onRenameMember,
-  onRemoveMember,
+  onApplyUsers,
+  onRemoveUser,
+  onRemoveCharacter,
   onSelectBosses,
   onChangeBoss,
   onRemoveBoss,
   onChangeRatio,
 }: Props) {
+  const groups = users
+    .map((user) => ({ user, characters: characters.filter((c) => c.userId === user.id) }))
+    .filter((g) => g.characters.length > 0)
+  const columns = groups.flatMap((g) => g.characters)
+  const colors = userColors(users)
+
   return (
     <section className="card">
       <div className="table-scroll">
         <table className="grid">
           <thead>
             <tr>
-              <th className="corner" />
-              {members.map((m) => (
-                <th key={m.id} className="player-head">
+              <th className="corner" rowSpan={2} />
+              {groups.map(({ user, characters }) => (
+                <th
+                  key={user.id}
+                  colSpan={characters.length}
+                  className="user-head"
+                  style={{ '--user-color': colors.get(user.id) } as CSSProperties}
+                >
                   <div className="head-box">
-                    <input
-                      value={m.name}
-                      onChange={(e) => onRenameMember(m.id, e.target.value)}
-                      aria-label="플레이어 이름"
-                    />
-                    <button className="ghost" onClick={() => onRemoveMember(m.id)} aria-label={`${m.name} 삭제`}>
+                    <span className="user-dot" aria-hidden />
+                    <span className="head-name">{user.name}</span>
+                    <button className="ghost" onClick={() => onRemoveUser(user.id)} aria-label={`${user.name} 삭제`}>
                       ✕
                     </button>
                   </div>
                 </th>
               ))}
-              <th>
-                <button className="add" onClick={onAddMember}>
-                  + 플레이어
-                </button>
+              <th rowSpan={2}>
+                <UserSettings users={users} characters={characters} onApply={onApplyUsers} />
               </th>
+            </tr>
+            <tr>
+              {groups.flatMap(({ characters }) =>
+                characters.map((c) => (
+                  <th key={c.id} className="character-head">
+                    <div className="head-box">
+                      <span className="head-name">{c.name}</span>
+                      {/* 유저마다 캐릭터는 최소 1개. 마지막 캐릭터는 유저째로 삭제 */}
+                      {characters.length > 1 && (
+                        <button className="ghost" onClick={() => onRemoveCharacter(c.id)} aria-label={`${c.name} 삭제`}>
+                          ✕
+                        </button>
+                      )}
+                    </div>
+                  </th>
+                )),
+              )}
             </tr>
           </thead>
           <tbody>
@@ -88,23 +116,23 @@ export function RatioGrid({
                     %
                   </label>
                 </th>
-                {members.map((m) => (
-                  <td key={m.id}>
+                {columns.map((c) => (
+                  <td key={c.id}>
                     <div className="ratio-cell">
                       <input
                         type="number"
                         min={0}
-                        defaultValue={ratios[m.id]?.[b.id] ?? 0}
+                        defaultValue={ratios[c.id]?.[b.id] ?? 0}
                         onFocus={(e) => e.target.select()}
                         onChange={(e) => {
                           const v = Number(e.target.value)
                           // 0 이하 또는 빈 값 = 불참
-                          onChangeRatio(m.id, b.id, v > 0 ? v : null)
+                          onChangeRatio(c.id, b.id, v > 0 ? v : null)
                         }}
                         onBlur={(e) => {
                           if (e.target.value === '') e.target.value = '0'
                         }}
-                        aria-label={`${m.name} ${b.name} 배율`}
+                        aria-label={`${c.name} ${b.name} 배율`}
                       />
                       <span className="unit">%</span>
                     </div>

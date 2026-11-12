@@ -1,7 +1,14 @@
 import type { BossPreset } from './bosses.ts'
 
-export type Member = {
+/** 실제 사람. 한 유저가 여러 캐릭터를 가짐 */
+export type User = {
   id: string
+  name: string
+}
+
+export type Character = {
+  id: string
+  userId: string
   name: string
 }
 
@@ -14,17 +21,18 @@ export type StoredBoss = {
 
 export type Boss = BossPreset & StoredBoss
 
-/** ratios[memberId][bossId] = 클리어 배율(%). 값이 없으면 해당 보스 불참 */
+/** ratios[characterId][bossId] = 클리어 배율(%). 값이 없으면 해당 보스 불참 */
 export type Ratios = Record<string, Record<string, number>>
 
 export type AppState = {
-  members: Member[]
+  users: User[]
+  characters: Character[]
   bosses: StoredBoss[]
   ratios: Ratios
 }
 
 export type PartySlot = {
-  member: Member
+  character: Character
   ratio: number
 }
 
@@ -36,6 +44,6 @@ export type Party = {
 export type BossSplit = {
   boss: Boss
   parties: Party[]
-  /** 어떤 파티에도 넣을 수 없어 클리어 불가한 인원 */
+  /** 어떤 파티에도 넣을 수 없어 클리어 불가한 캐릭터 */
   unassigned: PartySlot[]
 }

@@ -40,12 +40,12 @@ export function BossSelect({ bosses, onApply }: Props) {
       </button>
       <dialog
         ref={dialog}
-        className="boss-modal"
+        className="modal"
         aria-labelledby="boss-modal-title"
         // 바깥(backdrop) 클릭 시 닫기
         onClick={(e) => e.target === e.currentTarget && close()}
       >
-        <div className="boss-modal-head">
+        <div className="modal-head">
           <h2 id="boss-modal-title">보스 선택</h2>
           <button className="ghost" onClick={close} aria-label="닫기">
             ✕
@@ -77,7 +77,7 @@ export function BossSelect({ bosses, onApply }: Props) {
             </li>
           ))}
         </ul>
-        <div className="boss-modal-foot">
+        <div className="modal-foot">
           <span className="muted">{checked.size}개 선택</span>
           <button className="ghost" onClick={close}>
             취소
