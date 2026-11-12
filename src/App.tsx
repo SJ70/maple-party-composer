@@ -40,13 +40,15 @@ const withoutBosses = (ratios: Ratios, bossIds: Set<string>): Ratios =>
 export default function App() {
   const [state, setState] = useStoredState<AppState>('maple-party-split', EMPTY, migrate)
   const { users, characters, ratios } = state
-  // 보스 목록에 없는 이전 데이터(직접 입력한 보스)는 버리고, 목표 배율이 없으면 기본값으로. 배율 입력·결과 모두 정렬 순서로
+  // 보스 목록에 없는 이전 데이터(직접 입력한 보스)는 버리고, 목표 배율·인원이 없으면 기본값으로. 배율 입력·결과 모두 정렬 순서로
   const bosses = useMemo(
     () =>
       state.bosses
         .flatMap((b): Boss[] => {
           const preset = PRESETS.get(b.id)
-          return preset ? [{ ...preset, targetRatio: b.targetRatio ?? CLEAR_THRESHOLD }] : []
+          if (!preset) return []
+          const targetPlayers = Math.min(Math.max(b.targetPlayers ?? preset.maxPlayers, 1), preset.maxPlayers)
+          return [{ ...preset, targetRatio: b.targetRatio ?? CLEAR_THRESHOLD, targetPlayers }]
         })
         .toSorted((a, b) => a.order - b.order),
     [state.bosses],

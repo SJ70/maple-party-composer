@@ -19,9 +19,11 @@ export type StoredBoss = {
   id: string
   /** 파티 배율 합이 이 값(%) 이상이어야 클리어로 본다 */
   targetRatio: number
+  /** 한 파티 최대 인원 (1 ~ 보스 최대 인원). 없으면 보스 최대 인원 */
+  targetPlayers?: number
 }
 
-export type Boss = BossPreset & StoredBoss
+export type Boss = BossPreset & StoredBoss & { targetPlayers: number }
 
 /** ratios[characterId][bossId] = 클리어 배율(%). 값이 없으면 해당 보스 불참 */
 export type Ratios = Record<string, Record<string, number>>

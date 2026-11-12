@@ -39,6 +39,34 @@ function TargetInput({ boss, onChange }: { boss: Boss; onChange: (targetRatio: n
   )
 }
 
+/** 목표인원 입력칸 (1 ~ 보스 최대 인원). 범위를 벗어난 값은 나갈 때 범위 안으로, 비우면 최대 인원으로 */
+function PlayersInput({ boss, onChange }: { boss: Boss; onChange: (targetPlayers: number) => void }) {
+  const clamp = (v: number) => Math.min(Math.max(Math.round(v), 1), boss.maxPlayers)
+  return (
+    <label className="percent-input ratio-input">
+      <input
+        type="number"
+        min={1}
+        max={boss.maxPlayers}
+        step={1}
+        defaultValue={boss.targetPlayers}
+        onFocus={(e) => e.target.select()}
+        onChange={(e) => {
+          const v = Number(e.target.value)
+          if (e.target.value !== '' && v >= 1) onChange(clamp(v))
+        }}
+        onBlur={(e) => {
+          const v = e.target.value === '' ? boss.maxPlayers : clamp(Number(e.target.value))
+          e.target.value = String(v)
+          onChange(v)
+        }}
+        aria-label={`${boss.name} 목표인원`}
+      />
+      <span className="unit">명</span>
+    </label>
+  )
+}
+
 /** 열 = 보스, 행 = 캐릭터 (왼쪽 유저 색 띠로 유저별로 묶음), 칸 = 캐릭터의 보스 클리어 배율 */
 export function RatioGrid({
   users,
@@ -63,7 +91,11 @@ export function RatioGrid({
               <th className="corner" colSpan={2} />
               {bosses.map((b) => (
                 <th key={b.id} scope="col" className="boss-head">
-                  <BossCard boss={b} target={<TargetInput boss={b} onChange={(v) => onChangeBoss(b.id, { targetRatio: v })} />} />
+                  <BossCard
+                    boss={b}
+                    players={<PlayersInput boss={b} onChange={(v) => onChangeBoss(b.id, { targetPlayers: v })} />}
+                    target={<TargetInput boss={b} onChange={(v) => onChangeBoss(b.id, { targetRatio: v })} />}
+                  />
                 </th>
               ))}
             </tr>

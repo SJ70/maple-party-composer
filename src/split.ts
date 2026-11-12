@@ -41,7 +41,7 @@ type Plan = Score & { parties: number[][] }
 /**
  * 한 보스에 대한 파티 분배
  * - 같은 유저의 캐릭터끼리는 한 파티에 넣지 않는다
- * - 파티 인원은 보스 최대 인원 이하
+ * - 파티 인원은 목표인원(보스 최대 인원 이하) 이하. 1명이면 솔로 파티만
  * - 클리어 파티 수가 최대가 되도록 하고, 그중 배율 합 → 인원 수 → 파티 간 편차가 가장 작은 조합 (Score 참고)
  * - 빼도 목표를 넘는 캐릭터는 넣지 않고 낙오시킨다 (예: 목표 100, A200 B100 C20 → [A] [B], C 낙오)
  */
@@ -58,7 +58,8 @@ export function splitBoss(boss: Boss, characters: Character[], ratios: Ratios): 
   const searched = pool.slice(0, MAX_SEARCH)
   const overflow = pool.slice(MAX_SEARCH)
 
-  const plan = boss.maxPlayers >= 2 && target > 0 ? search(searched, target, boss.maxPlayers) : undefined
+  const maxPlayers = Math.min(boss.targetPlayers, boss.maxPlayers)
+  const plan = maxPlayers >= 2 && target > 0 ? search(searched, target, maxPlayers) : undefined
   const grouped = (plan?.parties ?? []).map((indexes) => indexes.map((i) => searched[i]))
   const used = new Set(grouped.flat())
 

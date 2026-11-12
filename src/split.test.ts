@@ -6,8 +6,8 @@ import type { Boss, BossSplit, Character, Ratios } from './types.ts'
 const BOSS_ID = 'test-boss'
 
 /** 캐릭터 이름 → 배율. 이름 뒤 `@유저`로 유저 지정 (없으면 캐릭터마다 다른 유저) */
-function run(target: number, maxPlayers: number, input: Record<string, number>): BossSplit {
-  const boss = { id: BOSS_ID, name: '테스트', targetRatio: target, maxPlayers, order: 0 } as Boss
+function run(target: number, maxPlayers: number, input: Record<string, number>, targetPlayers = maxPlayers): BossSplit {
+  const boss = { id: BOSS_ID, name: '테스트', targetRatio: target, maxPlayers, targetPlayers, order: 0 } as Boss
   const characters: Character[] = []
   const ratios: Ratios = {}
   for (const [key, ratio] of Object.entries(input)) {
@@ -54,6 +54,20 @@ describe('splitBoss', () => {
     const limited = run(100, 3, input)
     assert.deepEqual(names(limited), [])
     assert.deepEqual(leftover(limited), ['A', 'B', 'C', 'D'])
+  })
+
+  test('목표인원을 넘는 파티는 만들지 않는다', () => {
+    const input = { A: 60, B: 30, C: 20, D: 50 }
+    // 6인: B+C+D 100이 배율 합 최소
+    assert.deepEqual(names(run(100, 6, input)), ['BCD'])
+    // 목표인원 2: 2인 파티만 → A+D
+    const two = run(100, 6, input, 2)
+    assert.deepEqual(names(two), ['AD'])
+    assertValid(two, 100, 2)
+    // 목표인원 1: 솔로만
+    const solo = run(100, 6, { A: 100, B: 60, C: 50 }, 1)
+    assert.deepEqual(names(solo), ['A'])
+    assert.deepEqual(leftover(solo), ['B', 'C'])
   })
 
   test('최대 인원 안에서 가능한 조합을 찾는다', () => {
@@ -125,12 +139,13 @@ describe('splitBoss', () => {
     for (let iter = 0; iter < 500; iter++) {
       const target = [80, 100, 150][iter % 3]
       const maxPlayers = [2, 3, 6][Math.floor(iter / 3) % 3]
+      const targetPlayers = 1 + Math.floor(random() * maxPlayers)
       const input: Record<string, number> = {}
       const count = 1 + Math.floor(random() * 16)
       const users = 1 + Math.floor(random() * 8)
       for (let i = 0; i < count; i++) input[`c${i}@u${Math.floor(random() * users)}`] = Math.round(random() * 12000) / 100
-      const split = run(target, maxPlayers, input)
-      assertValid(split, target, maxPlayers)
+      const split = run(target, maxPlayers, input, targetPlayers)
+      assertValid(split, target, targetPlayers)
       assert.equal(split.parties.flatMap((p) => p.slots).length + split.unassigned.length, Object.values(input).filter((r) => r > 0).length)
     }
   })

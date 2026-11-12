@@ -66,7 +66,11 @@ export function PartyResults({ splits, users }: { splits: BossSplit[]; users: Us
       <div className="results">
         {splits.map(({ boss, parties, unassigned }) => (
           <div key={boss.id} className="result-row">
-            <BossCard boss={boss} target={<span className="result-value">{percent(boss.targetRatio)}</span>} />
+            <BossCard
+              boss={boss}
+              players={<span className="result-value">{boss.targetPlayers}명</span>}
+              target={<span className="result-value">{percent(boss.targetRatio)}</span>}
+            />
             <div className="result-parties">
               {parties.length === 0 && unassigned.length === 0 && (
                 <div className="result-card result-empty muted">참여 인원 없음</div>
