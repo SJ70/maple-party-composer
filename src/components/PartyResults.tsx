@@ -26,16 +26,18 @@ type PartyCardProps = {
   slots: PartySlot[]
   colors: Map<string, string>
   className?: string
+  /** 상단에 배율 합계를 보여줄지 (낙오 카드는 안 보여줌) */
+  showTotal?: boolean
 }
 
 /** 상단 파티 배율 합계, 아래로 캐릭터별 아바타 · 캐릭터 이름 · 솔플배율 · 딜점유율(솔플배율 / 합계) */
-function PartyCard({ title, slots, colors, className = '' }: PartyCardProps) {
+function PartyCard({ title, slots, colors, className = '', showTotal = true }: PartyCardProps) {
   const total = sum(slots)
   return (
     <div className={`result-card party ${className}`}>
       <div className="party-head">
         <span className="result-label">{title}</span>
-        <span className="result-value">{percent(total, 2)}</span>
+        {showTotal && <span className="result-value">{percent(total, 2)}</span>}
       </div>
       <ul className="party-members">
         {slots.map((s) => (
@@ -78,7 +80,7 @@ export function PartyResults({ splits, users }: { splits: BossSplit[]; users: Us
               {parties.map((party, i) => (
                 <PartyCard key={i} title="파티배율" slots={party.slots} colors={colors} />
               ))}
-              {unassigned.length > 0 && <PartyCard title="클리어 불가" slots={unassigned} colors={colors} className="unassigned" />}
+              {unassigned.length > 0 && <PartyCard title="낙오" slots={unassigned} colors={colors} className="unassigned" showTotal={false} />}
             </div>
           </div>
         ))}
