@@ -796,7 +796,7 @@ button.job-option.selected .job-portrait {
   align-items: center;
   gap: 8px;
   min-width: 0;
-  font-size: 0.75rem;
+  font-size: 0.875rem;
 }
 
 /* 가진 난이도만 왼쪽부터 채움. 칸 너비를 고정해 행끼리 시작점을 맞춘다 */
