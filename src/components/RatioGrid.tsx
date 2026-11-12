@@ -96,6 +96,7 @@ export function RatioGrid({
                           <input
                             type="number"
                             min={0}
+                            step={0.01}
                             defaultValue={ratios[c.id]?.[b.id] ?? 0}
                             onFocus={(e) => e.target.select()}
                             onChange={(e) => {

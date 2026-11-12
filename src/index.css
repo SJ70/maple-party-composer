@@ -265,15 +265,14 @@ button.ghost:hover {
 /* 목표배율 · 솔플배율 입력칸 */
 .ratio-input {
   display: inline-flex;
-  /* 세 자리 숫자 + % 가 들어가는 최소 너비 */
-  width: 48px;
+  /* 소수점 포함 네 자리(예: 12.34) + % 가 들어가는 너비 */
+  width: 58px;
   padding: 2px 6px;
 }
 
 .ratio-input input {
   font-weight: 700;
 }
-
 /* 보스 카드의 목표배율과 같은 모양으로 가운데 정렬 */
 .grid .ratio-cell {
   text-align: center;
@@ -341,9 +340,9 @@ button.add:hover {
   white-space: nowrap;
 }
 
-/* 이미지(96px) + "목표배율 [입력칸]" 이 들어가는 너비 */
+/* 이미지(106px) + "목표배율 [입력칸]" 이 들어가는 너비 */
 .result-boss {
-  width: 124px;
+  width: 134px;
   padding: 14px 12px;
   display: flex;
   flex-direction: column;
@@ -353,8 +352,8 @@ button.add:hover {
 }
 
 .result-boss .boss-image {
-  width: 96px;
-  height: 96px;
+  width: 106px;
+  height: 106px;
   border-radius: 8px;
   margin-bottom: 2px;
 }
