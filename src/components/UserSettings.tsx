@@ -97,7 +97,7 @@ export function UserSettings({ users, characters, onApply }: Props) {
           {draft.users.map((u, i) => {
             const owned = draft.characters.filter((c) => c.userId === u.id)
             return (
-              <li key={u.id} style={{ '--user-color': userColor(i) } as CSSProperties}>
+              <li key={u.id} style={{ '--user-color': userColor(i, draft.users.length) } as CSSProperties}>
                 <div className="user-modal-user">
                   <input
                     value={u.name}
