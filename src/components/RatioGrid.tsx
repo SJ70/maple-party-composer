@@ -4,6 +4,7 @@ import type { Boss, Character, Ratios, StoredBoss, User } from '../types.ts'
 import { userColors } from '../userColors.ts'
 import { BossCard } from './BossLabel.tsx'
 import { BossSelect } from './BossSelect.tsx'
+import { JobPortrait } from './JobPortrait.tsx'
 import { UserSettings } from './UserSettings.tsx'
 
 type Props = {
@@ -91,7 +92,10 @@ export function RatioGrid({
                     />
                   )}
                   <th scope="row" className="character-head">
-                    {c.name}
+                    <span className="character-label">
+                      <JobPortrait job={c.job} />
+                      <span className="character-name">{c.name}</span>
+                    </span>
                   </th>
                   {bosses.map((b) => (
                     <td key={b.id} className="ratio-cell">

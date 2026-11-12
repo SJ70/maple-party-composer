@@ -137,8 +137,8 @@ button.ghost:hover {
 
 /* 유저 색 좌측 띠. 한 유저의 캐릭터 행을 하나로 이음 (유저 설정 모달과 같은 직사각형 띠) */
 .grid .user-band {
-  width: 4px;
-  min-width: 4px;
+  width: 3px;
+  min-width: 3px;
   padding: 0;
   background: var(--user-color);
 }
@@ -147,12 +147,53 @@ button.ghost:hover {
 .grid .character-head {
   width: 140px;
   max-width: 140px;
-  /* 색 띠와의 거리 = 표 칸 간격(8px)만 */
   padding: 0 4px 0 0;
   font-size: 0.875rem;
   vertical-align: middle;
+}
+
+/* 색 띠와의 거리를 표 칸 간격(8px)보다 좁게 4px로. 칸 간격은 표 전체 값이라 내용을 왼쪽으로 당김 */
+.grid .character-head .character-label {
+  margin-left: -4px;
+}
+
+/* 직업 초상화 + 이름. 긴 이름은 말줄임 */
+.character-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.character-label .job-portrait {
+  width: 28px;
+  height: 28px;
+}
+
+.character-name {
+  min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+/* 직업 초상화 (정사각형). 직업이 없으면 점선 빈 칸 */
+.job-portrait {
+  flex: none;
+  display: block;
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  object-fit: cover;
+  background: #ffffff;
+}
+
+.job-portrait.empty {
+  display: grid;
+  background: var(--bg);
+  place-items: center;
+  border: 1px dashed var(--border);
+  color: var(--muted);
+  font-weight: 700;
+  line-height: 1;
 }
 
 /* 보스 열 머리 = 결과의 보스 카드, 목표배율만 입력 */
@@ -536,8 +577,8 @@ button.add:hover {
 .user-modal-list li {
   display: grid;
   gap: 6px;
-  padding: 2px 0 2px 12px;
-  border-left: 4px solid var(--user-color);
+  padding: 2px 0 2px 6px;
+  border-left: 3px solid var(--user-color);
 }
 
 .user-modal-list li.user-modal-add {
@@ -556,19 +597,86 @@ button.add:hover {
   font-weight: 600;
 }
 
-/* 유저 이름 아래로 캐릭터를 들여써서 세로로 나열 */
+/* 유저 이름 아래로 캐릭터를 세로로 나열 */
 .user-modal-characters {
   display: grid;
   justify-items: start;
   gap: 6px;
-  padding-left: 16px;
 }
 
+/* 직업 목록은 줄을 바꿔 캐릭터 아래에 펼침 */
 .user-modal-character {
   justify-self: stretch;
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   gap: 6px;
+}
+
+/* 초상화 = 직업 선택 버튼 */
+button.job-button {
+  padding: 0;
+  background: transparent;
+  border-radius: 6px;
+}
+
+/* 옆 이름 입력칸과 같은 높이 = 줄 높이(1.5em) + 위아래 padding(12px) + 테두리(2px) */
+button.job-button .job-portrait {
+  width: calc(1.5em + 14px);
+  height: calc(1.5em + 14px);
+}
+
+/* 직업 없는 칸은 점선 테두리 그대로 */
+button.job-button .job-portrait:not(.empty) {
+  outline: 1px solid var(--border);
+  outline-offset: -1px;
+}
+
+button.job-button:hover .job-portrait,
+button.job-button[aria-expanded='true'] .job-portrait {
+  outline: 2px solid var(--accent);
+  outline-offset: -1px;
+}
+
+.job-picker {
+  flex-basis: 100%;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, 48px);
+  justify-content: space-between;
+  gap: 8px;
+  padding: 8px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--bg);
+}
+
+/* 버튼은 보이지 않고 초상화만. 마우스 올림 · 선택은 초상화 테두리로 */
+button.job-option {
+  display: block;
+  padding: 0;
+  background: transparent;
+  border-radius: 6px;
+}
+
+/* 선택 안 된 직업은 반투명, 마우스를 올리거나 선택하면 불투명 */
+button.job-option .job-portrait {
+  width: 48px;
+  height: 48px;
+  opacity: 0.4;
+  outline: 1px solid var(--border);
+  outline-offset: -1px;
+}
+
+button.job-option:hover .job-portrait {
+  opacity: 1;
+  outline: 2px solid var(--muted);
+  outline-offset: -1px;
+}
+
+button.job-option.selected .job-portrait {
+  opacity: 1;
+  outline: 2px solid var(--accent);
+  outline-offset: -1px;
 }
 
 .user-modal-character input {

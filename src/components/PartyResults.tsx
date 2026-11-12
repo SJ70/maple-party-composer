@@ -1,4 +1,5 @@
 import type { CSSProperties } from 'react'
+import { jobImage } from '../jobs.ts'
 import type { BossSplit, Character, PartySlot, User } from '../types.ts'
 import { userColors } from '../userColors.ts'
 import { BossCard } from './BossLabel.tsx'
@@ -6,13 +7,16 @@ import { BossCard } from './BossLabel.tsx'
 const percent = (n: number, digits = 0) => `${n.toFixed(digits)}%`
 const sum = (slots: PartySlot[]) => slots.reduce((total, s) => total + s.ratio, 0)
 
-/** 캐릭터 이름 첫 글자 + 캐릭터 id 기반 고정 배경색, 원 안쪽 테두리 = 유저 색상 */
+/** 직업 초상화 (없으면 캐릭터 이름 첫 글자 + 캐릭터 id 기반 고정 배경색), 원 안쪽 테두리 = 유저 색상 */
 function Avatar({ character, userColor }: { character: Character; userColor: string | undefined }) {
+  const image = jobImage(character.job)
   const hue = [...character.id].reduce((h, c) => (h * 31 + c.charCodeAt(0)) % 360, 0)
-  const style = { background: `hsl(${hue} 55% 55%)`, '--user-color': userColor } as CSSProperties
+  // 초상화는 배경으로 깔아야 inset 테두리가 그 위에 그려짐
+  const background = image ? `url("${image}") center / cover, #ffffff` : `hsl(${hue} 55% 55%)`
+  const style = { background, '--user-color': userColor } as CSSProperties
   return (
     <span className="avatar" style={style} aria-hidden>
-      <span>{character.name.trim().charAt(0) || '?'}</span>
+      {!image && <span>{character.name.trim().charAt(0) || '?'}</span>}
     </span>
   )
 }

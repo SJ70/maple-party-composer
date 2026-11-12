@@ -1,6 +1,8 @@
 import { useRef, useState, type CSSProperties } from 'react'
 import type { Character, User } from '../types.ts'
+import { JOBS } from '../jobs.ts'
 import { userColor } from '../userColors.ts'
+import { JobPortrait } from './JobPortrait.tsx'
 
 type Props = {
   users: User[]
@@ -22,6 +24,8 @@ export function UserSettings({ users, characters, onApply }: Props) {
   const [draft, setDraft] = useState<Draft>({ users: [], characters: [] })
   /** 방금 추가한 유저 · 캐릭터 이름 칸에 포커스 */
   const [focusId, setFocusId] = useState<string | null>(null)
+  /** 직업 목록을 펼친 캐릭터 id */
+  const [pickerFor, setPickerFor] = useState<string | null>(null)
 
   const addUser = () => {
     const userId = crypto.randomUUID()
@@ -36,6 +40,7 @@ export function UserSettings({ users, characters, onApply }: Props) {
   const open = () => {
     setDraft({ users, characters })
     setFocusId(null)
+    setPickerFor(null)
     // 유저가 없으면 바로 입력할 수 있게 1명 추가해서 열기
     if (users.length === 0) addUser()
     dialog.current?.showModal()
@@ -59,6 +64,11 @@ export function UserSettings({ users, characters, onApply }: Props) {
 
   const removeCharacter = (id: string) =>
     setDraft((d) => ({ ...d, characters: d.characters.filter((c) => c.id !== id) }))
+
+  const setJob = (id: string, job: string | undefined) => {
+    setDraft((d) => ({ ...d, characters: d.characters.map((c) => (c.id === id ? { ...c, job } : c)) }))
+    setPickerFor(null)
+  }
 
   const apply = () => {
     onApply(draft.users, draft.characters)
@@ -102,7 +112,16 @@ export function UserSettings({ users, characters, onApply }: Props) {
                 </div>
                 <div className="user-modal-characters">
                   {owned.map((c) => (
-                    <span key={c.id} className="user-modal-character">
+                    <div key={c.id} className="user-modal-character">
+                      <button
+                        className="job-button"
+                        onClick={() => setPickerFor((id) => (id === c.id ? null : c.id))}
+                        aria-expanded={pickerFor === c.id}
+                        aria-label={`${c.name} 직업 선택${c.job ? ` (현재 ${c.job})` : ''}`}
+                        title={c.job ?? '직업 선택'}
+                      >
+                        <JobPortrait job={c.job} />
+                      </button>
                       <input
                         value={c.name}
                         onChange={(e) => renameCharacter(c.id, e.target.value)}
@@ -119,7 +138,33 @@ export function UserSettings({ users, characters, onApply }: Props) {
                       >
                         ✕
                       </button>
-                    </span>
+                      {pickerFor === c.id && (
+                        <div className="job-picker" role="group" aria-label={`${c.name} 직업`}>
+                          {JOBS.map((j) => (
+                            <button
+                              key={j.name}
+                              className={`job-option${c.job === j.name ? ' selected' : ''}`}
+                              onClick={() => setJob(c.id, j.name)}
+                              aria-pressed={c.job === j.name}
+                              aria-label={j.name}
+                              title={j.name}
+                            >
+                              <JobPortrait job={j.name} />
+                            </button>
+                          ))}
+                          {c.job && (
+                            <button
+                              className="job-option job-clear"
+                              onClick={() => setJob(c.id, undefined)}
+                              aria-label="선택 해제"
+                              title="선택 해제"
+                            >
+                              <JobPortrait job={undefined} />
+                            </button>
+                          )}
+                        </div>
+                      )}
+                    </div>
                   ))}
                   <button className="add" onClick={() => addCharacter(u.id)}>
                     + 캐릭터

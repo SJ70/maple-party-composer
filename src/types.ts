@@ -10,6 +10,8 @@ export type Character = {
   id: string
   userId: string
   name: string
+  /** 직업 이름 (jobs.ts의 JOBS). 없으면 미선택 */
+  job?: string
 }
 
 /** 저장되는 보스. id = BossPreset id (예: lucid-hard) */
