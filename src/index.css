@@ -206,6 +206,51 @@ button.theme-toggle:hover {
   vertical-align: middle;
 }
 
+/* 가로 스크롤 시 왼쪽 모서리 · 유저 띠 · 캐릭터 열 고정.
+   칸 간격(8px)은 칸이 덮지 않아 뒤로 지나가는 보스 칸이 비치므로, 각 칸의 ::before 를 간격까지 넓혀 카드 배경으로 가림.
+   ::before 는 칸 배경 · 그림자보다 위에 그려지므로 띠 색 · 행 강조도 ::before · ::after 로 그림 */
+.grid .corner,
+.grid .user-band,
+.grid .character-head {
+  position: sticky;
+  z-index: 1;
+}
+
+.grid :is(.corner, .user-band, .character-head)::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  background: var(--surface);
+}
+
+/* 표 첫 간격(8px) 뒤 = 띠 위치 */
+.grid .corner,
+.grid .user-band {
+  left: 8px;
+}
+
+/* 띠(3px) + 간격(8px) 뒤 */
+.grid .character-head {
+  left: 19px;
+}
+
+/* 아래 간격 절반은 첫 행 강조 그림자(4px)가 지나가는 자리 */
+.grid .corner::before {
+  inset: 0 -8px -4px;
+}
+
+/* 좌우 간격 + 위아래 간격 절반. 띠 색은 가운데 3px 에만 */
+.grid .user-band::before {
+  inset: -4px -8px;
+  background:
+    linear-gradient(var(--user-color), var(--user-color)) 8px 4px / 3px calc(100% - 8px) no-repeat,
+    var(--surface);
+}
+
+.grid .character-head::before {
+  inset: 0 -8px;
+}
+
 /* 색 띠와의 거리를 표 칸 간격(8px)보다 좁게 4px로. 칸 간격은 표 전체 값이라 내용을 왼쪽으로 당김 */
 .grid .character-head .character-label {
   margin-left: -4px;
@@ -330,13 +375,19 @@ button.theme-toggle:hover {
   --row-tint: var(--row-focus);
 }
 
-.grid tbody tr:is(:hover, :has(.ratio-cell input:focus)) > :is(.character-head, .ratio-cell) {
+.grid tbody tr:is(:hover, :has(.ratio-cell input:focus)) > .ratio-cell {
   background: var(--row-tint);
   box-shadow: 0 0 0 4px var(--row-tint);
 }
 
-.grid tbody tr:is(:hover, :has(.ratio-cell input:focus)) > .character-head {
-  border-radius: 6px 0 0 6px;
+/* 고정 캐릭터 칸은 ::after 로 강조. 오른쪽 간격(8px)까지 채워 보스 칸 강조와 이음 */
+.grid tbody tr:is(:hover, :has(.ratio-cell input:focus)) > .character-head::after {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  inset: -4px -8px -4px -4px;
+  border-radius: 10px 0 0 10px;
+  background: var(--row-tint);
 }
 
 .grid tbody tr:is(:hover, :has(.ratio-cell input:focus)) > .ratio-cell:last-child {
