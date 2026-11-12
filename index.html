@@ -4,6 +4,19 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>메이플스토리 보스 파티 조합기</title>
+    <!-- 첫 화면이 그려지기 전에 테마를 정해 깜빡임 방지. 저장된 선택이 없으면 시스템 설정을 따름 (ThemeToggle.tsx와 같은 키) -->
+    <script>
+      let saved = null
+      try {
+        saved = localStorage.getItem('maple-party-split:theme')
+      } catch {}
+      document.documentElement.dataset.theme =
+        saved === 'light' || saved === 'dark'
+          ? saved
+          : matchMedia('(prefers-color-scheme: dark)').matches
+            ? 'dark'
+            : 'light'
+    </script>
   </head>
   <body>
     <div id="root"></div>

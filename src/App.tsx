@@ -3,6 +3,7 @@ import { PRESETS } from './bosses.ts'
 import { BossSelect } from './components/BossSelect.tsx'
 import { PartyResults } from './components/PartyResults.tsx'
 import { RatioGrid } from './components/RatioGrid.tsx'
+import { ThemeToggle } from './components/ThemeToggle.tsx'
 import { UserSettings } from './components/UserSettings.tsx'
 import { CLEAR_THRESHOLD } from './split.ts'
 import type { AppState, Boss, Character, Ratios, StoredBoss, User } from './types.ts'
@@ -94,6 +95,7 @@ export default function App() {
           <h1>메이플스토리 보스 파티 조합기</h1>
           <p className="muted">캐릭터별 배율에 따라 최적의 보스 파티를 구성해줍니다.</p>
         </div>
+        <ThemeToggle />
         <div className="grid-toolbar">
           <UserSettings users={users} characters={characters} onApply={applyUsers} />
           <BossSelect bosses={bosses} onApply={selectBosses} />

@@ -11,26 +11,28 @@
   --row-focus: #fdf0e4;
   --row-hover: #f5f5f7;
 
+  color-scheme: light;
   font-family: system-ui, 'Segoe UI', 'Malgun Gothic', sans-serif;
   line-height: 1.5;
   color: var(--text);
   background: var(--bg);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg: #141317;
-    --surface: #1e1d22;
-    --text: #ebeaf0;
-    --muted: #9b98a6;
-    --border: #34323b;
-    --accent: #f08a35;
-    --accent-text: #1a1206;
-    --danger: #ef7d7d;
-    --danger-bg: #2c1a1c;
-    --row-focus: #2d241c;
-    --row-hover: #232227;
-  }
+/* data-theme 은 index.html 스크립트가 시스템 설정 · 저장된 선택으로 정하고, ThemeToggle 이 바꿈 */
+:root[data-theme='dark'] {
+  --bg: #141317;
+  --surface: #1e1d22;
+  --text: #ebeaf0;
+  --muted: #9b98a6;
+  --border: #34323b;
+  --accent: #f08a35;
+  --accent-text: #1a1206;
+  --danger: #ef7d7d;
+  --danger-bg: #2c1a1c;
+  --row-focus: #2d241c;
+  --row-hover: #232227;
+
+  color-scheme: dark;
 }
 
 * {
@@ -101,13 +103,49 @@ button.ghost:hover {
   gap: 16px;
 }
 
-/* 왼쪽 제목 · 부제목, 오른쪽 아래 설정 버튼. 좁으면 버튼이 아래 줄로 */
+/* 왼쪽 제목 · 부제목, 오른쪽 위 테마 전환, 오른쪽 아래 설정 버튼. 좁으면 설정 버튼이 아래 줄로 */
 .app header {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  align-items: flex-end;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas:
+    'title theme'
+    'title toolbar';
+  align-items: end;
   gap: 8px 16px;
+}
+
+@media (max-width: 720px) {
+  .app header {
+    grid-template-areas:
+      'title theme'
+      'toolbar toolbar';
+  }
+}
+
+.app-title {
+  grid-area: title;
+}
+
+.app header .grid-toolbar {
+  grid-area: toolbar;
+}
+
+button.theme-toggle {
+  grid-area: theme;
+  align-self: start;
+  justify-self: end;
+  display: grid;
+  place-items: center;
+  padding: 6px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--muted);
+}
+
+button.theme-toggle:hover {
+  color: var(--text);
+  border-color: var(--muted);
 }
 
 .app-title h1 {
