@@ -612,19 +612,21 @@ button.add:hover {
   list-style: none;
   overflow: auto;
   display: grid;
-  gap: 16px;
 }
 
-/* 유저 색상은 좌측 띠 */
+/* 유저 색상은 좌측 띠.
+   항목 간격은 gap 대신 아래 margin으로 줘야 추가 · 삭제 애니메이션에서 간격도 같이 접힘 */
 .user-modal-list li {
   display: grid;
   gap: 6px;
   padding: 2px 0 2px 6px;
+  margin-bottom: 16px;
   border-left: 3px solid var(--user-color);
 }
 
 .user-modal-list li.user-modal-add {
   padding: 0;
+  margin: 0;
   border: none;
 }
 
@@ -643,16 +645,16 @@ button.add:hover {
 .user-modal-characters {
   display: grid;
   justify-items: start;
-  gap: 6px;
 }
 
-/* 직업 목록은 줄을 바꿔 캐릭터 아래에 펼침 */
+/* 직업 목록은 줄을 바꿔 캐릭터 아래에 펼침. 간격은 유저 목록처럼 아래 margin */
 .user-modal-character {
   justify-self: stretch;
+  margin-bottom: 6px;
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 6px;
+  column-gap: 6px;
 }
 
 /* 초상화 = 직업 선택 버튼 */
@@ -680,8 +682,10 @@ button.job-button[aria-expanded='true'] .job-portrait {
   outline-offset: -1px;
 }
 
+/* 캐릭터 줄과의 간격은 줄 gap 대신 위 margin. 펼치고 접을 때 간격도 같이 움직이게 */
 .job-picker {
   flex-basis: 100%;
+  margin-top: 6px;
   display: grid;
   grid-template-columns: repeat(auto-fill, 48px);
   justify-content: space-between;
