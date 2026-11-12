@@ -31,57 +31,57 @@ const BOSSES = [
 ] as const
 type BossId = (typeof BOSSES)[number]['id']
 
-/** 추가할 수 있는 보스 + 난이도 조합 */
-const AVAILABLE: [BossId, Difficulty][] = [
-  ['baldrix', 'extreme'],
-  ['limbo', 'extreme'],
-  ['jupiter', 'hard'],
-  ['kaling', 'extreme'],
-  ['first-adversary', 'extreme'],
-  ['kalos', 'extreme'],
-  ['baldrix', 'hard'],
-  ['bellona', 'hard'],
-  ['limbo', 'hard'],
-  ['malefic-star', 'hard'],
-  ['jupiter', 'normal'],
-  ['first-adversary', 'hard'],
-  ['baldrix', 'normal'],
-  ['kaling', 'hard'],
-  ['chosen-seren', 'extreme'],
-  ['black-mage', 'extreme'],
-  ['limbo', 'normal'],
-  ['kalos', 'chaos'],
-  ['bellona', 'normal'],
-  ['kaling', 'normal'],
-  ['malefic-star', 'normal'],
-  ['lotus', 'extreme'],
-  ['first-adversary', 'normal'],
-  ['kalos', 'normal'],
-  ['bellona', 'easy'],
-  ['kaling', 'easy'],
-  ['chosen-seren', 'hard'],
-  ['first-adversary', 'easy'],
-  ['kalos', 'easy'],
-  ['black-mage', 'hard'],
-  ['chosen-seren', 'normal'],
-  ['verus-hilla', 'hard'],
-  ['darknell', 'hard'],
-  ['gloom', 'chaos'],
-  ['guardian-angel-slime', 'chaos'],
-  ['will', 'hard'],
-  ['lucid', 'hard'],
-  ['verus-hilla', 'normal'],
-  ['damien', 'hard'],
-  ['lotus', 'hard'],
-  ['darknell', 'normal'],
-  ['gloom', 'normal'],
-  ['lucid', 'normal'],
-  ['will', 'normal'],
-  ['will', 'easy'],
-  ['lucid', 'easy'],
-  ['guardian-angel-slime', 'normal'],
-  ['lotus', 'normal'],
-  ['damien', 'normal'],
+/** 추가할 수 있는 보스 + 난이도 조합, 최대 인원 */
+const AVAILABLE: [BossId, Difficulty, number][] = [
+  ['baldrix', 'extreme', 3],
+  ['limbo', 'extreme', 3],
+  ['jupiter', 'hard', 3],
+  ['kaling', 'extreme', 6],
+  ['first-adversary', 'extreme', 3],
+  ['kalos', 'extreme', 6],
+  ['baldrix', 'hard', 3],
+  ['bellona', 'hard', 3],
+  ['limbo', 'hard', 3],
+  ['malefic-star', 'hard', 3],
+  ['jupiter', 'normal', 3],
+  ['first-adversary', 'hard', 3],
+  ['baldrix', 'normal', 3],
+  ['kaling', 'hard', 6],
+  ['chosen-seren', 'extreme', 6],
+  ['black-mage', 'extreme', 6],
+  ['limbo', 'normal', 3],
+  ['kalos', 'chaos', 6],
+  ['bellona', 'normal', 3],
+  ['kaling', 'normal', 6],
+  ['malefic-star', 'normal', 3],
+  ['lotus', 'extreme', 2],
+  ['first-adversary', 'normal', 3],
+  ['kalos', 'normal', 6],
+  ['bellona', 'easy', 3],
+  ['kaling', 'easy', 6],
+  ['chosen-seren', 'hard', 6],
+  ['first-adversary', 'easy', 3],
+  ['kalos', 'easy', 6],
+  ['black-mage', 'hard', 6],
+  ['chosen-seren', 'normal', 6],
+  ['verus-hilla', 'hard', 6],
+  ['darknell', 'hard', 6],
+  ['gloom', 'chaos', 6],
+  ['guardian-angel-slime', 'chaos', 6],
+  ['will', 'hard', 6],
+  ['lucid', 'hard', 6],
+  ['verus-hilla', 'normal', 6],
+  ['damien', 'hard', 6],
+  ['lotus', 'hard', 6],
+  ['darknell', 'normal', 6],
+  ['gloom', 'normal', 6],
+  ['lucid', 'normal', 6],
+  ['will', 'normal', 6],
+  ['will', 'easy', 6],
+  ['lucid', 'easy', 6],
+  ['guardian-angel-slime', 'normal', 6],
+  ['lotus', 'normal', 6],
+  ['damien', 'normal', 6],
 ]
 
 const images = Object.fromEntries(
@@ -99,19 +99,21 @@ export type BossPreset = {
   /** 예: 하드 루시드 */
   name: string
   image: string | undefined
+  /** 최대 파티 인원 */
+  maxPlayers: number
   /** 정렬 순서 (보스 선택 목록 순 → 난이도 순) */
   order: number
 }
 
 export const presetId = (bossId: string, difficulty: Difficulty) => `${bossId}-${difficulty}`
 
-const available = new Set(AVAILABLE.map(([bossId, difficulty]) => presetId(bossId, difficulty)))
+const maxPlayersById = new Map(AVAILABLE.map(([bossId, difficulty, max]) => [presetId(bossId, difficulty), max]))
 
 /** 보스 선택 목록. 각 보스의 난이도는 이지 → 익스트림 순 */
 export const BOSS_OPTIONS = BOSSES.map((b) => ({
   ...b,
   image: images[b.name],
-  difficulties: (Object.keys(DIFFICULTIES) as Difficulty[]).filter((d) => available.has(presetId(b.id, d))),
+  difficulties: (Object.keys(DIFFICULTIES) as Difficulty[]).filter((d) => maxPlayersById.has(presetId(b.id, d))),
 }))
 
 export const PRESETS = new Map<string, BossPreset>(
@@ -119,7 +121,7 @@ export const PRESETS = new Map<string, BossPreset>(
     ({ boss, difficulty }, order) => {
       const id = presetId(boss.id, difficulty)
       const name = `${DIFFICULTIES[difficulty]} ${boss.name}`
-      return [id, { id, bossId: boss.id, bossName: boss.name, difficulty, name, image: boss.image, order }]
+      return [id, { id, bossId: boss.id, bossName: boss.name, difficulty, name, image: boss.image, maxPlayers: maxPlayersById.get(id)!, order }]
     },
   ),
 )
